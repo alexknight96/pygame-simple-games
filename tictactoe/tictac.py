@@ -33,7 +33,7 @@ def draw_grid():
             pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
 def mouse_pos():
-    # Takes the mouse position and, if over a tile, returns the tile index relative to the boardlist
+    # Takes the mouse position and, if over a tile, returns the tile index relative to the board list
     pos = pygame.mouse.get_pos()
     print(pos)
     x = pos[0] // BLOCK_SIZE
@@ -41,17 +41,34 @@ def mouse_pos():
 
     return x, y
 
+def check_winstate(player):
+    # Check the board horizontally for a winstate. 
+    for row in board:
+        if all(cell == player for cell in row):
+            print('win')
+            return True
+
 def modify_board():
     global active_player
-
+    
     x, y = mouse_pos()
-    board[y][x] = active_player
 
+    if board[y][x] == '':
+        board[y][x] = active_player
+
+    # If a piece is already placed it is removed
+    else:
+        board[y][x] = ''
+
+    check_winstate(active_player)
+    
+    # Cycles through the X and O piece each turn
     if active_player == 0:
         active_player = 1
 
     else:
         active_player = 0
+
 
     print(board)
 
