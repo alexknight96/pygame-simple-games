@@ -35,18 +35,42 @@ def draw_grid():
 def mouse_pos():
     # Takes the mouse position and, if over a tile, returns the tile index relative to the board list
     pos = pygame.mouse.get_pos()
-    print(pos)
     x = pos[0] // BLOCK_SIZE
     y = pos[1] // BLOCK_SIZE
 
     return x, y
 
 def check_winstate(player):
-    # Check the board horizontally for a winstate. 
-    for row in board:
-        if all(cell == player for cell in row):
-            print('win')
-            return True
+
+    def check_row(board):
+        for row in board:
+            if all(cell == player for cell in row):
+                print('win')
+                return True
+    
+    diag_board = [['', '', ''],
+                  ['', '', '']] 
+# Move the diagonal entries to an ordered list for easy winstate checking
+#    for i in range(3):
+#        diag_board[0][i] = board[i][i]
+#        
+#        for j in range(2, -1, -1):
+#            print(board[0][2])
+#            #print(i, j)            
+#            diag_board[1][i] = board[0][j]
+#    for i in range(2, -1, -1):
+#        print(i)
+#        diag_board[1][i] = board[i][i]
+#        
+#    print(diag_board)
+
+    # Check the board horizontally for a winstate
+    check_row(board)
+
+    # Check the board vertically for a winstate
+    check_row(reversed_board)
+
+
 
 def modify_board():
     global active_player
@@ -55,10 +79,12 @@ def modify_board():
 
     if board[y][x] == '':
         board[y][x] = active_player
+        reversed_board[x][y] = active_player
 
     # If a piece is already placed it is removed
-    else:
-        board[y][x] = ''
+#    else:
+#        board[y][x] = ''
+#        reversed_board[y][x] = ''
 
     check_winstate(active_player)
     
@@ -69,13 +95,16 @@ def modify_board():
     else:
         active_player = 0
 
-
-    print(board)
-
 # Board set-up 
 board = [['', '', ''],
          ['', '', ''],
          ['', '', '']]
+
+# Stores pieces in vertical rows for easy winstate checking
+reversed_board = [['', '', ''],
+                  ['', '', ''],
+                  ['', '', '']]
+
 
 running = True
 
