@@ -4,8 +4,8 @@ import pygame
 # Resolution & Display
 WINDOW_WIDTH = 300
 WINDOW_HEIGHT = 300
-SCREEN = pygame.display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
 
+SCREEN = pygame.display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
 pygame.display.set_caption('Tic-Tac-Toe')
 
 # Grid Settings
@@ -13,10 +13,14 @@ BLOCK_SIZE = 100
 
 # RGB Colors
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+WHITE = (235, 235, 235)
+BACKGROUND_COLOR = (250, 250, 250)
 
 # Game variables
+# 0 == O, 1 == X
 active_player = 0 
+CLOCK = pygame.time.Clock()
+winstate = False 
 
 # Import pygame.locals for easier access to key coordinates
 from pygame.locals import (
@@ -41,10 +45,10 @@ def mouse_pos():
     return x, y
 
 def check_winstate(player):
-
     def check_row(board):
         for row in board:
             if all(cell == player for cell in row):
+                winstate = True
                 print('win')
                 return True
     
@@ -70,7 +74,9 @@ def check_winstate(player):
     # Check the board vertically for a winstate
     check_row(reversed_board)
 
-
+    # Check the board for a draw
+    if '' in board:
+        print('test')
 
 def modify_board():
     global active_player
@@ -100,17 +106,23 @@ board = [['', '', ''],
          ['', '', ''],
          ['', '', '']]
 
+#board = [[''] * 3, [''] * 3, ['']] * 3
+
 # Stores pieces in vertical rows for easy winstate checking
 reversed_board = [['', '', ''],
                   ['', '', ''],
                   ['', '', '']]
 
-
 running = True
 
 def game_display():
+    # Set background
+    SCREEN.fill((255, 255, 255))
+
     draw_grid()
     pygame.display.flip()
+
+pygame.init()
 
 # Main loop
 while running: 
@@ -124,3 +136,5 @@ while running:
                 running = False
 
     game_display()
+
+    CLOCK.tick(60)
