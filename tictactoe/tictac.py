@@ -68,11 +68,15 @@ def check_winstate(player):
                 print('win')
                 return True
 
-#            print(diag_board)
+    # See if there's a better way to do this
+    j = 2
 
-    # Stores the top-left to bottom-right diagonal corner in the first row of diag_board
+    # Stores the diagonals in diag_board
     for i in range(3): 
         diag_board[0][i] = board[i][i]
+        diag_board[1][i] = board[i][j]
+
+        j -= 1
 
     # Check the board horizontally for a winstate
     check_row(board)
