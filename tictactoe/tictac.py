@@ -22,6 +22,19 @@ active_player = 0
 CLOCK = pygame.time.Clock()
 winstate = False 
 
+# Board set-up 
+board = [['', '', ''],
+         ['', '', ''],
+         ['', '', '']]
+
+# Stores pieces in vertical rows for easy winstate checking
+reversed_board = [['', '', ''],
+                  ['', '', ''],
+                  ['', '', '']]
+
+
+diag_board = [['', '', ''],
+              ['', '', '']] 
 # Import pygame.locals for easier access to key coordinates
 from pygame.locals import (
         K_q,
@@ -42,31 +55,24 @@ def mouse_pos():
     x = pos[0] // BLOCK_SIZE
     y = pos[1] // BLOCK_SIZE
 
+    print(x, y)
+
     return x, y
 
 def check_winstate(player):
     def check_row(board):
         for row in board:
+            # Check to see if an entire row matches, if it does winstate becomes True
             if all(cell == player for cell in row):
                 winstate = True
                 print('win')
                 return True
-    
-    diag_board = [['', '', ''],
-                  ['', '', '']] 
-# Move the diagonal entries to an ordered list for easy winstate checking
-#    for i in range(3):
-#        diag_board[0][i] = board[i][i]
-#        
-#        for j in range(2, -1, -1):
-#            print(board[0][2])
-#            #print(i, j)            
-#            diag_board[1][i] = board[0][j]
-#    for i in range(2, -1, -1):
-#        print(i)
-#        diag_board[1][i] = board[i][i]
-#        
-#    print(diag_board)
+
+#            print(diag_board)
+
+    # Stores the top-left to bottom-right diagonal corner in the first row of diag_board
+    for i in range(3): 
+        diag_board[0][i] = board[i][i]
 
     # Check the board horizontally for a winstate
     check_row(board)
@@ -74,9 +80,8 @@ def check_winstate(player):
     # Check the board vertically for a winstate
     check_row(reversed_board)
 
-    # Check the board for a draw
-    if '' in board:
-        print('test')
+    # Check the board diagonally for a winstate
+    check_row(diag_board) 
 
 def modify_board():
     global active_player
@@ -87,31 +92,22 @@ def modify_board():
         board[y][x] = active_player
         reversed_board[x][y] = active_player
 
+        check_winstate(active_player)
+        
+        # Cycles through the X and O piece each turn
+        if active_player == 0:
+            active_player = 1
+
+        else:
+            active_player = 0
+
     # If a piece is already placed it is removed
 #    else:
 #        board[y][x] = ''
 #        reversed_board[y][x] = ''
 
-    check_winstate(active_player)
-    
-    # Cycles through the X and O piece each turn
-    if active_player == 0:
-        active_player = 1
+#    print(board)
 
-    else:
-        active_player = 0
-
-# Board set-up 
-board = [['', '', ''],
-         ['', '', ''],
-         ['', '', '']]
-
-#board = [[''] * 3, [''] * 3, ['']] * 3
-
-# Stores pieces in vertical rows for easy winstate checking
-reversed_board = [['', '', ''],
-                  ['', '', ''],
-                  ['', '', '']]
 
 running = True
 
@@ -130,6 +126,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONUP:
             modify_board() 
+            print(diag_board)
 
         if event.type == pygame.KEYDOWN:
             if event.key in [K_ESCAPE, K_q]:
